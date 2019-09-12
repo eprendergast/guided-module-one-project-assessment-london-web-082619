@@ -1,7 +1,5 @@
 $prompt = TTY::Prompt.new 
 
-progressbar = ProgressBar.create
-
 def signin_method  #works
     user_input = $prompt.select("\nWelcome to EventBkr. Please enter your details to proceed with your booking", ["Log in", "Register"])
     if user_input == "Log in"

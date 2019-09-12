@@ -5,7 +5,5 @@ require_all "./app"
 # require_relative "../lib/seed.rb"
 
 
-# signin_method
+signin_method
 
-binding.pry 
-'save'

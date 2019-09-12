@@ -4,11 +4,14 @@
 # Public token: 6LBP7OZ37SMBHZCM75LS
 # require_relative "../lib/command_line_start.rb"
 
+require_relative './progress_bar.rb'
+
 class EventBrite
 
     require 'rest-client'
     require 'json'
     require 'pry'
+    require 'progress_bar'
 
     @@token = "token=CXS22JWMRNKAGSTG6RXF"
     #if URL is one => /?
