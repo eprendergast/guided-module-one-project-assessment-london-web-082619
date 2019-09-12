@@ -126,28 +126,34 @@ class EventBrite
         event_results.each do |event|
             event_id = event["id"]
             
-            if date_formatted = self.display_date(self.parse_date_time(event["start"])) 
-                date_formatted
+            if event["start"] != nil
+                date_formatted = self.display_date(self.parse_date_time(event["start"]))
             else
                 date_formatted = self.display_date(Time.now)
             end
 
-            if event_name = event["name"]["text"]
-                event_name
+            if event["name"]["text"] != nil
+                event_name = event["name"]["text"]
             else 
                 event_name = "Not specified"
             end
 #PICK UP HERE
 #/labs/MOD1/Project/guided-module-one-project-assessment-london-web-082619/lib/api_communicator.rb:141: Invalid char `\x08' in expression (SyntaxError)
 
-            if location = event["venue"]["address"]["city"]
-                location
-            else
+            # if location = event["venue"]#["address"]#["city"]
+            #     location
+            # else
+            #     location = "Not specified"
+            # end
+
+            if event["venue"] != nil && event["venue"]["address"] != nil && event["venue"]["address"]["city"] != nil
+                location = event["venue"]["address"]["city"]
+            else 
                 location = "Not specified"
             end
 
-            if category = self.category_name(event["category_id"])
-                category
+            if event["category_id"] != nil
+                category = self.category_name(event["category_id"])
             else
                 category = "Not specified"
             end

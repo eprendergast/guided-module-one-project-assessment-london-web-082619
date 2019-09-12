@@ -1,5 +1,7 @@
 $prompt = TTY::Prompt.new 
 
+progressbar = ProgressBar.create
+
 def signin_method  #works
     user_input = $prompt.select("\nWelcome to EventBkr. Please enter your details to proceed with your booking", ["Log in", "Register"])
     if user_input == "Log in"
@@ -22,8 +24,7 @@ def register
 end 
 
 def log_in_prompt #works
-   email = $prompt.ask("Email:", required: true) {|q|
-        q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
+   email = $prompt.ask("Email:", required: true) {|q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
    password = $prompt.mask("Password:", required: true) 
    array = [email, password]
 end 
