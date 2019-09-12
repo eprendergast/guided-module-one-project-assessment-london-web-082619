@@ -1,3 +1,3 @@
 class Array
-    include ProgressBar::WithProgress
-  end
+  include ProgressBar::WithProgress
+end

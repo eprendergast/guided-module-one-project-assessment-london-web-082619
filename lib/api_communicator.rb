@@ -125,8 +125,8 @@ class EventBrite
     #returns an array of event search results (to be passed into TTY Prompt function)- WORKING
     def self.display_search_results(results)
         events = []
-        event_results = results.sample(10)
-        event_results.each do |event|
+        event_results = results.sample(20)
+        event_results.with_progress.each do |event|
             event_id = event["id"]
             
             if event["start"] != nil
