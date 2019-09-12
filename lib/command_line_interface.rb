@@ -2,8 +2,19 @@ require_relative "../lib/api_communicator.rb"
 class System
     @@prompt = TTY::Prompt.new 
 
+      def self.head 
+        puts ""
+puts "        ████████╗██╗   ██╗██╗  ██╗████████╗███╗   ███╗ █████╗ ████████╗ ██████╗██╗  ██╗".red
+puts "        ╚══██╔══╝╚██╗ ██╔╝██║ ██╔╝╚══██╔══╝████╗ ████║██╔══██╗╚══██╔══╝██╔════╝██║  ██║".yellow
+puts "           ██║    ╚████╔╝ █████╔╝    ██║   ██╔████╔██║███████║   ██║   ██║     ███████║".green
+puts "           ██║     ╚██╔╝  ██╔═██╗    ██║   ██║╚██╔╝██║██╔══██║   ██║   ██║     ██╔══██║".blue
+puts "           ██║      ██║   ██║  ██╗   ██║██╗██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╗██║  ██║".cyan
+puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝".white
+    end 
+
     def self.signin_method  #works
-        user_input = @@prompt.select("\nWelcome to EventBkr. Please enter your details to proceed with your booking", ["Log in", "Register"])
+        self.head
+        user_input = @@prompt.select("\nWelcome to Tykt.match. Please enter your details to proceed with your booking", ["Log in", "Register"])
         if user_input == "Log in"
             self.log_in
         else 
@@ -29,29 +40,28 @@ class System
     array = [email, password]
     end 
 
-    def self.log_in #works
-        i = 0
-    array = log_in_prompt
-    if User.find_by(email: array[0]).email == array[0] && User.find_by(email: array[0]).password == array[1]
+    def self.log_in(retries = 0) #works
+        array = log_in_prompt
+        user = User.find_by(email: array[0])
+        if user
+            user.password == array[1]
             @@current_user = User.find_by(email: array[0])
 
-        puts "\nHere we go!\n"
+            puts "\nHere we go!\n"
 
-        selection = main_menu 
-    else #doesnt work if wrong email and password - WHY?
-        until i == 3  
+            selection = main_menu 
+        else
             puts "\nInvalid email and password. Please try again."
-            array = log_in_prompt
-            if User.find_by(email: array[0]).email == array[0] && User.find_by(email: array[0]).password == array[1]
-                @@current_user = User.find_by(email: array[0])
-                puts "\nHere we go!\n"
-
-                selection = main_menu
+            if retries < 3
+                retries += 1
+                self.log_in(retries)
+            else
+                exit
             end
-            i += 1
         end
     end
-    end 
+
+  
 
     def self.make_booking(event_data)
         num = @@prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
@@ -61,7 +71,7 @@ class System
         new_ticket = Booking.create(user_id: @@current_user.id, event_id: new_event.id, number: num.to_i) 
         #reset current user
         @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-        puts "\nCongratulations! You have secured a booking of #{new_ticket.number} ticket(s) for #{new_event.name} !\n"
+        puts "\nCongratulations! You have secured a booking of #{new_ticket.number} ticket(s) for #{new_event.name} !\n".yellow
         self.main_menu
     end
 
@@ -157,14 +167,14 @@ class System
                 booking = @@current_user.bookings.find{ |booking| booking.id == booking_id }
                 booking.update(number: new_num.to_i)
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-                puts "\nUpdated!\n"
+                puts "\nUpdated!\n".yellow
                 self.main_menu
 
             when "Refund Booking"
                 booking_id = selection2.split(" - ")[0].to_i
                 @@current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-                puts "\nYou have deleted your booking.\n" #works
+                puts "\nYou have deleted your booking.\n".yellow #works
                 self.main_menu
             end 
     end 

@@ -12,6 +12,7 @@ gem "rake"
 gem "database_cleaner"
 gem 'tty-prompt'
 gem 'progress_bar'
+gem 'colorize'
 # gem "faker"
 
 
