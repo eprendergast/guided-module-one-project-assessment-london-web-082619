@@ -14,6 +14,7 @@ GEM
       tzinfo (~> 1.1)
     arel (9.0.0)
     coderay (1.1.2)
+    colorize (0.8.1)
     concurrent-ruby (1.1.5)
     database_cleaner (1.7.0)
     domain_name (0.5.20190701)
@@ -87,6 +88,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  colorize
   database_cleaner
   progress_bar
   pry

@@ -2,8 +2,19 @@ require_relative "../lib/api_communicator.rb"
 class System
     @@prompt = TTY::Prompt.new 
 
+      def self.head 
+        puts ""
+puts "        ████████╗██╗   ██╗██╗  ██╗████████╗███╗   ███╗ █████╗ ████████╗ ██████╗██╗  ██╗".red
+puts "        ╚══██╔══╝╚██╗ ██╔╝██║ ██╔╝╚══██╔══╝████╗ ████║██╔══██╗╚══██╔══╝██╔════╝██║  ██║".yellow
+puts "           ██║    ╚████╔╝ █████╔╝    ██║   ██╔████╔██║███████║   ██║   ██║     ███████║".green
+puts "           ██║     ╚██╔╝  ██╔═██╗    ██║   ██║╚██╔╝██║██╔══██║   ██║   ██║     ██╔══██║".blue
+puts "           ██║      ██║   ██║  ██╗   ██║██╗██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╗██║  ██║".cyan
+puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝".white
+    end 
+
     def self.signin_method  #works
-        user_input = @@prompt.select("\nWelcome to EventBkr. Please enter your details to proceed with your booking", ["Log in", "Register"])
+        self.head
+        user_input = @@prompt.select("\nWelcome to Tykt.match. Please enter your details to proceed with your booking", ["Log in", "Register"])
         if user_input == "Log in"
             self.log_in
         else 
@@ -61,7 +72,7 @@ class System
         new_ticket = Booking.create(user_id: @@current_user.id, event_id: new_event.id, number: num.to_i) 
         #reset current user
         @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-        puts "\nCongratulations! You have secured a booking of #{new_ticket.number} ticket(s) for #{new_event.name} !\n"
+        puts "\nCongratulations! You have secured a booking of #{new_ticket.number} ticket(s) for #{new_event.name} !\n".yellow
         self.main_menu
     end
 
@@ -157,14 +168,14 @@ class System
                 booking = @@current_user.bookings.find{ |booking| booking.id == booking_id }
                 booking.update(number: new_num.to_i)
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-                puts "\nUpdated!\n"
+                puts "\nUpdated!\n".yellow
                 self.main_menu
 
             when "Refund Booking"
                 booking_id = selection2.split(" - ")[0].to_i
                 @@current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-                puts "\nYou have deleted your booking.\n" #works
+                puts "\nYou have deleted your booking.\n".yellow #works
                 self.main_menu
             end 
     end 
