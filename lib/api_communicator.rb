@@ -140,14 +140,6 @@ class EventBrite
             else 
                 event_name = "Not specified"
             end
-#PICK UP HERE
-#/labs/MOD1/Project/guided-module-one-project-assessment-london-web-082619/lib/api_communicator.rb:141: Invalid char `\x08' in expression (SyntaxError)
-
-            # if location = event["venue"]#["address"]#["city"]
-            #     location
-            # else
-            #     location = "Not specified"
-            # end
 
             if event["venue"] != nil && event["venue"]["address"] != nil && event["venue"]["address"]["city"] != nil
                 location = event["venue"]["address"]["city"]
