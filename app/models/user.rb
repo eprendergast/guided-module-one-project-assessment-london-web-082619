@@ -6,19 +6,13 @@ class User < ActiveRecord::Base
     self.all.map{|user| user.email}
   end 
 
-  # def self.find_by_email(user_email)
-  #   user_emails.select{|email| email.include?(user_email)}
-  # end
-
   def self.user_passwords 
     self.all.map{|user| user.password}
   end 
 
   def booking_summary
-    self.bookings.map{ |booking| "#{booking.id} - #{booking.event.name} - #{booking.event.location} - No. of tickets: #{booking.number}" }
+    self.bookings.map{ |booking| "BOOKING ID: #{booking.id}  |  EVENT: #{booking.event.name}  |  LOCATION: #{booking.event.location}  |  NO. OF TICKETS: #{booking.number}" }
   end
-
-    
 
 end 
 
