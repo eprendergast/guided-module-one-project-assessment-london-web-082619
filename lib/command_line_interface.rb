@@ -42,28 +42,30 @@ class System
     end 
 
     def self.log_in(retries = 0) #works
-        array = log_in_prompt
-        user = User.find_by(email: array[0])
-        if user
-            user.password == array[1]
-            @@current_user = User.find_by(email: array[0])
-
-            puts "\nHere we go!\n"
-
-            selection = main_menu 
-        else
-            puts "\nInvalid email and password. Please try again."
-            if retries < 3
+        if retries < 3
+            array = log_in_prompt
+            user = User.find_by(email: array[0])
+            if user
+                if user.password == array[1]
+                    @@current_user = User.find_by(email: array[0])
+                    puts "\nHere we go!\n"
+                    selection = main_menu
+                else
+                    puts "\nInvalid email and password. Please try again."
+                    retries += 1
+                    self.log_in(retries)
+                end
+            else
+                puts "\nInvalid email and password. Please try again."
                 retries += 1
                 self.log_in(retries)
-            else
-                exit
             end
+        else
+            exit
         end
     end
 
     def self.make_booking(event_data)
-        binding.pry
         num = @@prompt.ask("Quantity:", required: true) {|q| q.validate( /^[1-9]{1,1}$/, 'Invalid ticket quantity! Please input a number between 1 and 10')}
         #create an Event Object using the data from the API
         new_event = EventBrite.create_event_object(event_data)
@@ -170,7 +172,7 @@ class System
                 self.main_menu
 
             when "Refund Booking"
-                booking_id = selection.split("  |  ")[0].split(": ")[1].to_i
+                booking_id = selection2.split("  |  ")[0].split(": ")[1].to_i
                 @@current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
                 puts "\nYou have deleted your booking.\n".yellow #works
