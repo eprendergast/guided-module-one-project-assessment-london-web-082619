@@ -22,8 +22,7 @@ def register
 end 
 
 def log_in_prompt #works
-   email = $prompt.ask("Email:", required: true) {|q|
-        q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
+   email = $prompt.ask("Email:", required: true) {|q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
    password = $prompt.mask("Password:", required: true) 
    array = [email, password]
 end 

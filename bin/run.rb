@@ -7,5 +7,3 @@ require_all "./app"
 
 signin_method
 
-# binding.pry 
-# 'save'
