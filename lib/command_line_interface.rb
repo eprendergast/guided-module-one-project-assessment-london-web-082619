@@ -27,20 +27,18 @@ class System
     end 
 
     def self.register 
-    first_name = @@prompt.ask("First Name:", required: true)
-    last_name = @@prompt.ask("Last Name:", required: true)
-    email = @@prompt.ask("Email:", required: true) {|q|
-            q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
-    password = @@prompt.mask("Password:", required: true) {|q|
-            q.validate(/^\S{8,}$/, "Password must include at least 8 characters")}
-    user1 = User.create(first_name: first_name, last_name: last_name, email: email, password: password)
-    @@current_user = user1
+        first_name = @@prompt.ask("First Name:", required: true){ |q| q.validate(/^[a-zA-Z'-]+$/, 'Invalid entry. Please try again.')}
+        last_name = @@prompt.ask("Last Name:", required: true){ |q| q.validate(/^[a-zA-Z'-]+$/, 'Invalid entry. Please try again.')}
+        email = @@prompt.ask("Email:", required: true) { |q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address. Please try again.')}
+        password = @@prompt.mask("Password:", required: true) { |q| q.validate(/^\S{8,20}$/, "Password must be between 8 and 20 characters. Please try again")}
+        user1 = User.create(first_name: first_name, last_name: last_name, email: email, password: password)
+        @@current_user = user1
     end 
 
     def self.log_in_prompt #works
-    email = @@prompt.ask("Email:", required: true) {|q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
-    password = @@prompt.mask("Password:", required: true) 
-    array = [email, password]
+        email = @@prompt.ask("Email:", required: true) {|q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
+        password = @@prompt.mask("Password:", required: true) {|q| q.validate(/^\S{8,20}$/, "Invalid! Password must be between 8 and 20 characters")}
+        array = [email, password]
     end 
 
     def self.log_in(retries = 0) #works
@@ -63,8 +61,6 @@ class System
             end
         end
     end
-
-  
 
     def self.make_booking(event_data)
         num = @@prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
