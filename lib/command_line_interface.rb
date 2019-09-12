@@ -63,7 +63,8 @@ class System
     end
 
     def self.make_booking(event_data)
-        num = @@prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
+        binding.pry
+        num = @@prompt.ask("Quantity:", required: true) {|q| q.validate( /^[1-9]{1,1}$/, 'Invalid quantity! Please input a number between 1 and 10')}
         #create an Event Object using the data from the API
         new_event = EventBrite.create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
