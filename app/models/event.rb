@@ -5,11 +5,11 @@ class Event < ActiveRecord::Base
     # Returns a formatted string of event info for an instance of Event
     def event_summary
         puts ""
-        puts "Event Name: #{self.name}"
-        puts "Date: #{self.start_time}" #NEED TO FORMAT THIS
-        puts "Location: #{self.location}"
-        puts "Category: #{self.category}"
-        puts "Description: #{self.description}"
+        puts "EVENT NAME: #{self.name}"
+        puts "DATE: #{self.start_time}" #NEED TO FORMAT THIS
+        puts "LOCATION: #{self.location}"
+        puts "CATEGORY: #{self.category}"
+        puts "DESCRIPTION: #{self.description}"
         puts ""
     end
 

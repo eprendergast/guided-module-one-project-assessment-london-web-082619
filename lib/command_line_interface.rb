@@ -1,20 +1,23 @@
 require_relative "../lib/api_communicator.rb"
+
 class System
     @@prompt = TTY::Prompt.new 
 
       def self.head 
         puts ""
-puts "        ████████╗██╗   ██╗██╗  ██╗████████╗███╗   ███╗ █████╗ ████████╗ ██████╗██╗  ██╗".red
-puts "        ╚══██╔══╝╚██╗ ██╔╝██║ ██╔╝╚══██╔══╝████╗ ████║██╔══██╗╚══██╔══╝██╔════╝██║  ██║".yellow
-puts "           ██║    ╚████╔╝ █████╔╝    ██║   ██╔████╔██║███████║   ██║   ██║     ███████║".green
-puts "           ██║     ╚██╔╝  ██╔═██╗    ██║   ██║╚██╔╝██║██╔══██║   ██║   ██║     ██╔══██║".blue
-puts "           ██║      ██║   ██║  ██╗   ██║██╗██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╗██║  ██║".cyan
-puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝".white
+        puts ""
+        puts "        ████████╗██╗   ██╗██╗  ██╗████████╗███╗   ███╗ █████╗ ████████╗ ██████╗██╗  ██╗".red
+        puts "        ╚══██╔══╝╚██╗ ██╔╝██║ ██╔╝╚══██╔══╝████╗ ████║██╔══██╗╚══██╔══╝██╔════╝██║  ██║".yellow
+        puts "           ██║    ╚████╔╝ █████╔╝    ██║   ██╔████╔██║███████║   ██║   ██║     ███████║".green
+        puts "           ██║     ╚██╔╝  ██╔═██╗    ██║   ██║╚██╔╝██║██╔══██║   ██║   ██║     ██╔══██║".blue
+        puts "           ██║      ██║   ██║  ██╗   ██║██╗██║ ╚═╝ ██║██║  ██║   ██║   ╚██████╗██║  ██║".cyan
+        puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝".white
+        puts ""
     end 
 
     def self.signin_method  #works
         self.head
-        user_input = @@prompt.select("\nWelcome to Tykt.match. Please enter your details to proceed with your booking", ["Log in", "Register"])
+        user_input = @@prompt.select("\nWelcome to Tykt.match! Please enter your login details to proceed", ["Log in", "Register"])
         if user_input == "Log in"
             self.log_in
         else 
@@ -79,7 +82,7 @@ puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚�
     searchmenu = @@prompt.select("How would you like to refine your search?", ["Location", "Category"])
     case searchmenu 
         when "Location"
-            cities = ["London", "Manchester", "Liverpool", "Edinburgh", "Oxford", "Brighton", "Birmingham", "Glasgow", "Cambridge", "Belfast", "Dublin", "Leeds", "Bath"].sort
+            cities = ["London", "Manchester", "Liverpool", "Edinburgh", "Oxford", "Brighton", "Birmingham", "Glasgow", "Cambridge", "Belfast", "Dublin", "Leeds", "Bath", "Sheffield", "Newcastle"].sort
             #requests user to select a city  
             location_input = @@prompt.select("Select Location(s)", cities, filter: true)
             #displays random 10 events for that city as a menu
@@ -107,7 +110,7 @@ puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚�
     end
 
     def self.no_bookings 
-        puts "\nYou have no bookings\n\n"
+        puts "\nYou have not made any bookings yet!\n\n"
         selection = @@prompt.select("What would you like to next?", ["Search For More Events", "Log Out", "End Session"])
         case selection 
         when "Search For More Events"
@@ -125,7 +128,7 @@ puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚�
         when "Search Events" #works
             self.search
         when "View My Bookings" #work
-            if $current_user.bookings.length == 0
+            if @@current_user.bookings.length == 0
                 self.no_bookings
             else 
                 self.my_bookings_navigation
@@ -138,10 +141,9 @@ puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚�
     end
 
     def self.my_bookings_navigation #works
-        selection = @@prompt.select("You currently have #{@@current_user.bookings.length} event booking(s). Please click on a ticket to see more about that event.", @@current_user.booking_summary)
-        # Given a selection from my_tickets_menu, return a summary of that event
-        #Example selection (string): ID - Opening Party - London
-        booking_id = selection.split(" - ")[0].to_i
+        selection = @@prompt.select("You currently have #{@@current_user.bookings.length} event booking(s). Please click on a booking to see more information.", @@current_user.booking_summary)
+        #Retrieve booking_id from string of booking info (Example booking info: "Booking ID: 12  |  Event: Opening Party |  Location: London |  No. of tickets: 2")
+        booking_id = selection.split("  |  ")[0].split(": ")[1].to_i 
         booking = @@current_user.bookings.find{ |booking| booking.id == booking_id }
         booking.event.event_summary
         self.event_summary_navigation
@@ -162,16 +164,16 @@ puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚�
 
             case action 
             when "Change Quantity"
-                booking_id = selection2.split(" - ")[0].to_i
+                booking_id = selection2.split("  |  ")[0].split(": ")[1].to_i
                 new_num = @@prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
                 booking = @@current_user.bookings.find{ |booking| booking.id == booking_id }
                 booking.update(number: new_num.to_i)
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
-                puts "\nUpdated!\n".yellow
+                puts "\nYour booking has been updated. You now have #{booking.number} ticket(s) for #{booking.event.name}.\n".yellow
                 self.main_menu
 
             when "Refund Booking"
-                booking_id = selection2.split(" - ")[0].to_i
+                booking_id = selection.split("  |  ")[0].split(": ")[1].to_i
                 @@current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
                 puts "\nYou have deleted your booking.\n".yellow #works

@@ -63,11 +63,6 @@ class EventBrite
         self.get_api_response(@@search_by_category_url + self.get_category_id(category_name) + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info a specific events
     end
     
-    #given an event id, get the event city - WORKING
-    # def self.get_event_city(event_id)
-    #     self.get_api_response("https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue" + "&")
-    # end
-    
     #given a city name (as a string), return all events in that city - WORKING
     def self.find_events_by_city(city)
         self.get_api_response(@@search_by_location_url + city + "&expand=venue" + "&")["events"]
@@ -125,7 +120,7 @@ class EventBrite
     #returns an array of event search results (to be passed into TTY Prompt function)- WORKING
     def self.display_search_results(results)
         events = []
-        event_results = results.sample(20)
+        results.length > 20 ? event_results = results.sample(20) : event_results = results.sample(results.length)
         event_results.with_progress.each do |event|
             event_id = event["id"]
             
@@ -165,11 +160,11 @@ class EventBrite
         event_id = selection.split("  |  ")[0]
         event_data = self.get_api_response("https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue" + "&")
         #print out event data
-        puts "Event Name: #{event_data["name"]["text"]}"
-        puts "Date & Time: #{self.display_date(self.parse_date_time(event_data["start"]))}"
-        puts "Location: #{event_data["venue"]["address"]["city"]}"
-        puts "Category: #{self.category_name(event_data["category_id"])}"
-        puts "Description: #{event_data["description"]["text"]}"
+        puts "EVENT NAME: #{event_data["name"]["text"]}"
+        puts "DATE & TIME: #{self.display_date(self.parse_date_time(event_data["start"]))}"
+        puts "LOCATION: #{event_data["venue"]["address"]["localized_address_display"]}"
+        puts "CATEGORY: #{self.category_name(event_data["category_id"])}"
+        puts "DESCRIPTION: #{event_data["description"]["text"]}"
         event_data
     end
     
@@ -179,7 +174,8 @@ class EventBrite
         description = event_data["description"]["text"]
         start_time = self.parse_date_time(event_data["start"])
         end_time = self.parse_date_time(event_data["end"])
-        location = event_data["venue"]["address"]["city"]
+        # location = event_data["venue"]["address"]["city"]
+        location = event_data["venue"]["address"]["localized_address_display"]
         category = self.category_name(event_data["category_id"])
         new_event = Event.create(name: name, description: description, start_time: start_time, end_time: end_time, location: location, category: category)
         new_event
