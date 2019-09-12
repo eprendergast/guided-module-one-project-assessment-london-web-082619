@@ -40,29 +40,28 @@ puts "           ╚═╝      ╚═╝   ╚═╝  ╚═╝   ╚═╝╚�
     array = [email, password]
     end 
 
-    def self.log_in #works
-        i = 0
-    array = log_in_prompt
-    if User.find_by(email: array[0]).email == array[0] && User.find_by(email: array[0]).password == array[1]
+    def self.log_in(retries = 0) #works
+        array = log_in_prompt
+        user = User.find_by(email: array[0])
+        if user
+            user.password == array[1]
             @@current_user = User.find_by(email: array[0])
 
-        puts "\nHere we go!\n"
+            puts "\nHere we go!\n"
 
-        selection = main_menu 
-    else #doesnt work if wrong email and password - WHY?
-        until i == 3  
+            selection = main_menu 
+        else
             puts "\nInvalid email and password. Please try again."
-            array = log_in_prompt
-            if User.find_by(email: array[0]).email == array[0] && User.find_by(email: array[0]).password == array[1]
-                @@current_user = User.find_by(email: array[0])
-                puts "\nHere we go!\n"
-
-                selection = main_menu
+            if retries < 3
+                retries += 1
+                self.log_in(retries)
+            else
+                exit
             end
-            i += 1
         end
     end
-    end 
+
+  
 
     def self.make_booking(event_data)
         num = @@prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
