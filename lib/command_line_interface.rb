@@ -30,24 +30,23 @@ def log_in_prompt #works
 end 
 
 def log_in #works
+    i = 0
   array = log_in_prompt
-  user1 = User.find_by(email: array[0])
-  if user1.email == array[0] && user1.password == array[1]
-      $current_user = user1
+ if User.find_by(email: array[0]).email == array[0] && User.find_by(email: array[0]).password == array[1]
+        $current_user = User.find_by(email: array[0])
 
       puts "\nHere we go!\n"
 
       selection = main_menu 
-   else #works
-       i= 0
+   else #doesnt work if wrong email and password - WHY?
       until i == 3  
-         puts "Invalid email and password. Please try again."
+         puts "\nInvalid email and password. Please try again."
          array = log_in_prompt
-         if user1.email == array[0] && user1.password == array[1]
+         if User.find_by(email: array[0]).email == array[0] && User.find_by(email: array[0]).password == array[1]
+            $current_user = User.find_by(email: array[0])
+            puts "\nHere we go!\n"
 
-             puts "\nHere we go!\n"
-
-             selection = main_menu
+            selection = main_menu
          end
          i += 1
       end
@@ -111,7 +110,7 @@ def no_bookings
 end 
 
 def main_menu
-    selection = $prompt.select("Please select an option from the menu below", ["Search Events", "View My Bookings", "Log Out", "End Session"])
+     selection = $prompt.select("Please select an option from the menu below", ["Search Events", "View My Bookings",  "Log Out", "End Session"])
     case selection 
     when "Search Events" #works
         search
@@ -121,6 +120,20 @@ def main_menu
         else 
             my_bookings_navigation
         end 
+    when "Log Out" #works
+        signin_method
+    when "End Session"
+        exit
+    end
+end
+
+def menu_after_search
+    selection = $prompt.select("Please select an option from the menu below", ["Search More Events", "Modify Bookings", "Log Out", "End Session"])
+    case selection 
+    when "Search More Events" #works
+        search
+    when "Modify Bookings" #work
+        modify_bookings
     when "Log Out" #works
         signin_method
     when "End Session"
@@ -140,20 +153,19 @@ def my_bookings_navigation #works
 end
 
 def event_summary_menu #works
-    $prompt.select("Actions:", ["Modify my Booking", "Main Menu"])
+    selection = $prompt.select("Actions:", ["Modify My Bookings", "Main Menu"])
+    if selection == "Modify My Bookings"
+        modify_bookings 
+    else 
+        main_menu 
+    end 
 end
 
-def event_summary_navigation
-
-    selection1 = event_summary_menu
-
-   if selection1 == "Modify my Booking"
-        selection2 = $prompt.select("Which booking would you like to change?", $current_user.booking_summary) #works
-        
-        action = $prompt.select("Actions: ", ["Change Quantity", "Refund Booking"]) #works
+def modify_bookings
+    selection2 = $prompt.select("Which booking would you like to change?", $current_user.booking_summary) #works
+    action = $prompt.select("Actions: ", ["Change Quantity", "Refund Booking"])
 
         case action 
-
         when "Change Quantity"
             booking_id = selection2.split(" - ")[0].to_i
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
@@ -161,7 +173,6 @@ def event_summary_navigation
             booking.update(number: new_num.to_i)
             $current_user = User.find_by(first_name: $current_user.first_name, last_name: $current_user.last_name, email: $current_user.email, password: $current_user.password)
             puts "\nUpdated!\n"
-
             main_menu
 
         when "Refund Booking"
@@ -169,13 +180,16 @@ def event_summary_navigation
             $current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
             $current_user = User.find_by(first_name: $current_user.first_name, last_name: $current_user.last_name, email: $current_user.email, password: $current_user.password)
             puts "\nYou have deleted your booking.\n" #works
-
             main_menu
         end 
+end 
 
-   else #selection == "Main Menu"
+def event_summary_navigation
+    selection1 = event_summary_menu
+   if selection1 == "Modify My Bookings"
+         modify_bookings
+    else 
         main_menu
     end
-
 end
 
