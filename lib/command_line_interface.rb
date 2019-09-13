@@ -6,6 +6,21 @@ class System
       def self.head 
         puts ""
         puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
+        puts ""
         puts "        ████████╗██╗   ██╗██╗  ██╗████████╗███╗   ███╗ █████╗ ████████╗ ██████╗██╗  ██╗".red
         puts "        ╚══██╔══╝╚██╗ ██╔╝██║ ██╔╝╚══██╔══╝████╗ ████║██╔══██╗╚══██╔══╝██╔════╝██║  ██║".yellow
         puts "           ██║    ╚████╔╝ █████╔╝    ██║   ██╔████╔██║███████║   ██║   ██║     ███████║".green
@@ -27,17 +42,17 @@ class System
     end 
 
     def self.register 
-        first_name = @@prompt.ask("First Name:", required: true){ |q| q.validate(/^[a-zA-Z'-]+$/, 'Invalid entry. Please try again.')}
-        last_name = @@prompt.ask("Last Name:", required: true){ |q| q.validate(/^[a-zA-Z'-]+$/, 'Invalid entry. Please try again.')}
-        email = @@prompt.ask("Email:", required: true) { |q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address. Please try again.')}
-        password = @@prompt.mask("Password:", required: true) { |q| q.validate(/^\S{8,20}$/, "Password must be between 8 and 20 characters. Please try again")}
+        first_name = @@prompt.ask("First Name:", required: true){ |q| q.validate(/^[a-zA-Z'-]+$/, '❌ Invalid entry. Please try again.')}
+        last_name = @@prompt.ask("Last Name:", required: true){ |q| q.validate(/^[a-zA-Z'-]+$/, '❌ Invalid entry. Please try again.')}
+        email = @@prompt.ask("Email:", required: true) { |q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, '❌ Invalid email address. Please try again.')}
+        password = @@prompt.mask("Password:", required: true) { |q| q.validate(/^\S{8,20}$/, "❌ Password must be between 8 and 20 characters. Please try again")}
         user1 = User.create(first_name: first_name, last_name: last_name, email: email, password: password)
         @@current_user = user1
     end 
 
     def self.log_in_prompt #works
-        email = @@prompt.ask("Email:", required: true) {|q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
-        password = @@prompt.mask("Password:", required: true) {|q| q.validate(/^\S{8,20}$/, "Invalid! Password must be between 8 and 20 characters")}
+        email = @@prompt.ask("Email:", required: true) {|q| q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, '❌ Invalid email address')}
+        password = @@prompt.mask("Password:", required: true) {|q| q.validate(/^\S{8,20}$/, "❌ Invalid! Password must be between 8 and 20 characters")}
         array = [email, password]
     end 
 
@@ -52,7 +67,7 @@ class System
 
             selection = main_menu 
         else
-            puts "\nInvalid email and password. Please try again."
+            puts "\n❌ Invalid email and password. Please try again."
             if retries < 3
                 retries += 1
                 self.log_in(retries)
@@ -63,7 +78,6 @@ class System
     end
 
     def self.make_booking(event_data)
-        binding.pry
         num = @@prompt.ask("Quantity:", required: true) {|q| q.validate( /^[1-9]{1,1}$/, 'Invalid ticket quantity! Please input a number between 1 and 10')}
         #create an Event Object using the data from the API
         new_event = EventBrite.create_event_object(event_data)
@@ -156,13 +170,13 @@ class System
     end
 
     def self.modify_bookings
-        selection2 = @@prompt.select("Which booking would you like to change?", @@current_user.booking_summary) #works
+        selection2 = @@prompt.select("Which booking would you like to change?", @@current_user.booking_summary) 
         action = @@prompt.select("Actions: ", ["Change Quantity", "Refund Booking"])
 
             case action 
             when "Change Quantity"
                 booking_id = selection2.split("  |  ")[0].split(": ")[1].to_i
-                new_num = @@prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
+                new_num = @@prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") {|q| q.validate( /^[1-9]{1,1}$/, 'Invalid ticket quantity! Please input a number between 1 and 10')}
                 booking = @@current_user.bookings.find{ |booking| booking.id == booking_id }
                 booking.update(number: new_num.to_i)
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
@@ -170,7 +184,7 @@ class System
                 self.main_menu
 
             when "Refund Booking"
-                booking_id = selection.split("  |  ")[0].split(": ")[1].to_i
+                booking_id = selection2.split("  |  ")[0].split(": ")[1].to_i
                 @@current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
                 @@current_user = User.find_by(first_name: @@current_user.first_name, last_name: @@current_user.last_name, email: @@current_user.email, password: @@current_user.password)
                 puts "\nYou have deleted your booking.\n".yellow #works

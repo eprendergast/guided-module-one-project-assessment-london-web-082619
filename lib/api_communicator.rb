@@ -154,6 +154,7 @@ class EventBrite
         events
     end
     
+    #VALIDATE RESPONSE
     #Example selection : "51521901394  |  September 28 2019 - 10:00  |  2019 Sweet Auburn Music Fest  |  Atlanta  |  Music"
     #given the selection from the search results, finds the event info and displays it in a summary - WORKING
     def self.event_summary(selection)
